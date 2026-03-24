@@ -5,31 +5,53 @@ on:
     branches: [main]
 
 jobs:
-  lint-test-build:
-    name: Lint, Test and Build
+  eslint:
+    name: ESLint
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
+      - uses: ./.github/actions/setup-node
 
       - name: ESLint
         run: npm run lint:eslint:check
 
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ./.github/actions/setup-node
+
       - name: Prettier
         run: npm run lint:prettier:check
 
+  vitest:
+    name: Vitest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ./.github/actions/setup-node
+
       - name: Run tests
         run: npm run test
+
+  commitlint:
+    name: commitlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-node
+        with:
+          fetch-depth: 0
+
+      - name: Run commitlint
+        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ./.github/actions/setup-node
 
       - name: Build
         run: npm run build
