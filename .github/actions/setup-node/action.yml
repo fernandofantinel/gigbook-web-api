@@ -1,4 +1,5 @@
 name: Setup Node Project
+description: Checks out the repo, installs Node.js, and runs npm ci
 
 inputs:
   fetch-depth:
