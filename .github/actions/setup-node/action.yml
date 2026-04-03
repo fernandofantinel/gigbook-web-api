@@ -1,0 +1,22 @@
+name: Setup Node Project
+description: Checks out the repo, installs Node.js, and runs npm ci
+
+inputs:
+  fetch-depth:
+    required: false
+    default: "1"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: npm
+
+    - run: npm ci
+      shell: bash
